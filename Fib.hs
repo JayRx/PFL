@@ -1,3 +1,5 @@
+import BigNumber
+
 -- Ex 1.1
 fibRec :: (Integral a) => a -> a
 fibRec 0 = 0
@@ -19,3 +21,17 @@ fibs = 0 : 1 : [a+b | (a,b)<-zip fibs (tail fibs)]
 
 fibListaInfinita :: Int -> Int
 fibListaInfinita a = last (take (a+1) fibs)
+
+-- Ex 3
+fibRecBN :: BigNumber -> BigNumber
+fibRecBN [0] = [0]
+fibRecBN [1] = [1]
+fibRecBN a = somaBN (fibRecBN (subBN a [1])) (fibRecBN (subBN a [2]))
+
+--fibListaBN :: BigNumber -> BigNumber
+--fibListaBN a
+--  | a == [0] = [0]
+--  | a == [1] = [1]
+--  | otherwise = somaBN (aux !! (subBN a [1])) (aux !! (subBN a [2]))
+--      where
+--        aux = map fibListaBN []
