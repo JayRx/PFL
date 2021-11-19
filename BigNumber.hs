@@ -31,9 +31,17 @@ output bigNumberInput =
 --    firstDigit = if (length first /= 0) then head first else 0
 --    secondDigit = if (length second /= 0) then head second else 0
 --    digitSum = [firstDigit + secondDigit]
-	
+
+removeZerosBN :: BigNumber -> BigNumber
+removeZerosBN (0:[]) = [0]
+removeZerosBN (0:xs) = xs
+removeZerosBN xs = xs
+
 changeSignBN :: BigNumber -> BigNumber
 changeSignBN (x:xs) = (-x):xs
+
+changeSignFormatBN :: BigNumber -> BigNumber
+changeSignFormatBN xs = changeSignBN (removeZerosBN xs)
 
 isNegBN :: BigNumber -> Bool
 isNegBN (x:xs)
@@ -41,11 +49,27 @@ isNegBN (x:xs)
     then True
     else False
 
+isBiggerBN :: BigNumber -> BigNumber -> Bool
+isBiggerBN (x:xs) (y:ys)
+  = if (length (x:xs) < length (y:ys))
+      then False
+    else if (length (x:xs) > length(y:ys))
+      then True
+    else if (x > y)
+      then True
+    else if (x < y)
+      then False
+    else isBiggerBN xs ys
+
 somaBN :: BigNumber -> BigNumber -> BigNumber
-somaBN a b 
+somaBN a b
   = if (isNegBN a && isNegBN b)
-    then changeSignBN (reverse (somaBN_aux (reverse (changeSignBN a)) (reverse (changeSignBN b)) 0))
-    else reverse (somaBN_aux (reverse a) (reverse b) 0)
+      then changeSignFormatBN (reverse (somaBN_aux (reverse (changeSignBN a)) (reverse (changeSignBN b)) 0))
+    else if (not (isNegBN a) && isNegBN b)
+      then subBN a (changeSignBN b)
+    else if (isNegBN a && not (isNegBN b))
+      then subBN b (changeSignBN a)
+    else removeZerosBN (reverse (somaBN_aux (reverse a) (reverse b) 0))
   where somaBN_aux [] [] 0 = []
         somaBN_aux [] [] c = [c]
         somaBN_aux [] (y:ys) c = (y + c):ys
@@ -57,30 +81,32 @@ somaBN a b
             where aux = x + y + c
 
 subBN :: BigNumber -> BigNumber -> BigNumber
-subBN a b 
-  = reverse (subBN_aux (reverse a) (reverse b) 0)
+subBN a b
+  = if (isBiggerBN a b)
+      then removeZerosBN (reverse (subBN_aux (reverse a) (reverse b) 0))
+    else changeSignFormatBN (reverse (subBN_aux (reverse b) (reverse a) 0))
   where subBN_aux [] [] _ = []
-        subBN_aux [] (y:ys) c = y:ys
-        subBN_aux (x:xs) [] c = (x - c):xs
+        subBN_aux (x:[]) (y:[]) c = [x - y - c]
+        subBN_aux (x:xs) ([]) c = [x - c]
         subBN_aux (x:xs) (y:ys) c
-          = if (x >= y)
+          = if (aux >= 0)
             then aux:subBN_aux (xs) (ys) 0
-            else (x + y + 1):subBN_aux (xs) (ys) 1
+            else (10 + aux):subBN_aux (xs) (ys) 1
             where aux = x - y
 
-subBN :: BigNumber -> BigNumber -> BigNumber
-subBN first second =
+--subBN :: BigNumber -> BigNumber -> BigNumber
+--subBN first second =
 
-  if ((length second <= 1) && (length first <= 1))
-    then [firstDigit - secondDigit]
-  else if ((length second == 0) && (length first >= 1))
-    then [firstDigit - secondDigit] ++ subBN (tail first) [0]
-  else if ((length first == 0) && (length second >= 1))
-    then [firstDigit - secondDigit] ++ subBN [0] (tail second)
-  else [firstDigit - secondDigit] ++ subBN (tail first) (tail second)
-  where
-    firstDigit = if (length first /= 0) then head first else 0
-    secondDigit = if (length second /= 0) then head second else 0
+--  if ((length second <= 1) && (length first <= 1))
+--    then [firstDigit - secondDigit]
+--  else if ((length second == 0) && (length first >= 1))
+--    then [firstDigit - secondDigit] ++ subBN (tail first) [0]
+--  else if ((length first == 0) && (length second >= 1))
+--    then [firstDigit - secondDigit] ++ subBN [0] (tail second)
+--  else [firstDigit - secondDigit] ++ subBN (tail first) (tail second)
+--  where
+--    firstDigit = if (length first /= 0) then head first else 0
+--    secondDigit = if (length second /= 0) then head second else 0
 
 
 mulBN :: BigNumber -> BigNumber -> BigNumber
