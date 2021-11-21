@@ -35,3 +35,23 @@ fibRecBN a = somaBN (fibRecBN (subBN a [1])) (fibRecBN (subBN a [2]))
 --  | otherwise = somaBN (aux !! (subBN a [1])) (aux !! (subBN a [2]))
 --      where
 --        aux = map fibListaBN []
+
+fibsBN :: [BigNumber]
+fibsBN = [0] : [1] : [somaBN a b | (a,b)<-zip fibsBN (tail fibsBN)]
+
+getNthBN :: [BigNumber] -> BigNumber -> BigNumber
+getNthBN (x:xs) n =
+  if (isBiggerBN n [0])
+    then getNthBN (xs) (subBN n [1])
+  else x
+
+fibListaBN :: BigNumber -> BigNumber
+fibListaBN a
+  | a == [0] = [0]
+  | a == [1] = [1]
+  | otherwise = somaBN (getNthBN aux (subBN a [1])) (getNthBN aux (subBN a [2]))
+    where
+      aux = map fibListaBN [[x] | x<-[0..]]
+
+fibListaInfinitaBN :: BigNumber -> BigNumber
+fibListaInfinitaBN a = getNthBN fibsBN a
