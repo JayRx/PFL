@@ -14,7 +14,9 @@ type BigNumber = [Int]
 -- Ex 2.2
 scanner :: String -> BigNumber
 scanner stringInput =
-  map(\x -> read [x]::Int) stringInput
+  if (head stringInput == '-')
+    then changeSignBN (map(\x -> read [x]::Int) (tail stringInput))
+  else map(\x -> read [x]::Int) stringInput
 
 -- Ex 2.3
 output :: BigNumber -> String
@@ -113,6 +115,10 @@ fixCarry xs = removeZerosBN (reverse (fixCarry_aux (reverse xs) 0))
   where fixCarry_aux [] c = [c]
         fixCarry_aux (x:xs) c = mod (x+c) 10:fixCarry_aux (xs) (div (x+c) 10)
 
+{- Same as fixCarry but for a pair of BigNumbers in the format (BigNumber, BigNumber) -}
+fixCarryPair :: (BigNumber, BigNumber) -> (BigNumber, BigNumber)
+fixCarryPair (xs, ys) = (fixCarry xs, fixCarry ys)
+
 -- Ex 2.4
 somaBN :: BigNumber -> BigNumber -> BigNumber
 somaBN a b
@@ -187,12 +193,118 @@ divBN a b =
   else divBN_aux a b 0
   where divBN_aux a b n =
           if ((isBiggerBN a b) || (a == b))
-            then divBN_aux (subBN a b) b (n+1)
+            then fixCarryPair (divBN_aux (subBN a b) b (n+1))
           else (fixCarry [n], fixCarry a)
 
 -- Ex 5
 safeDivBN :: BigNumber -> BigNumber -> Maybe (BigNumber, BigNumber)
 safeDivBN a b =
-  if (isBiggerBN b [])
+  if (b /= [0])
     then Just (divBN a b)
   else Nothing
+
+-- Test Functions
+
+{- Test scanner with a string representing a positive number -}
+testScannerPos :: BigNumber
+testScannerPos = scanner "12345"
+
+{- Test scanner with a string representing a negative number -}
+testScannerNeg :: BigNumber
+testScannerNeg = scanner "-12345"
+
+{- Test output with a positive BigNumber -}
+testOutputPos :: String
+testOutputPos = output [1,2,3,4,5]
+
+{- Test output with a negative BigNumber -}
+testOutputNeg :: String
+testOutputNeg = output [-1,2,3,4,5]
+
+{- Test somaBN with two positive numbers -}
+testSomaBNPosPos :: BigNumber
+testSomaBNPosPos = somaBN [1,2,3] [4,5,6]
+
+{- Test somaBN with one positive and one negative number (in that order) -}
+testSomaBNPosNeg :: BigNumber
+testSomaBNPosNeg = somaBN [1,2,3] [-4,5,6]
+
+{- Test somaBN with one negative and one positive number (in that order) -}
+testSomaBNNegPos :: BigNumber
+testSomaBNNegPos = somaBN [-1,2,3] [4,5,6]
+
+{- Test somaBN with two negative numbers -}
+testSomaBNNegNeg :: BigNumber
+testSomaBNNegNeg = somaBN [-1,2,3] [-4,5,6]
+
+{- Test subBN with two positive numbers -}
+testsubBNPosPos :: BigNumber
+testsubBNPosPos = subBN [1,2,3] [4,5,6]
+
+{- Test subBN with one positive and one negative number (in that order) -}
+testsubBNPosNeg :: BigNumber
+testsubBNPosNeg = subBN [1,2,3] [-4,5,6]
+
+{- Test subBN with one negative and one positive number (in that order) -}
+testsubBNNegPos :: BigNumber
+testsubBNNegPos = subBN [-1,2,3] [4,5,6]
+
+{- Test subBN with two negative numbers -}
+testsubBNNegNeg :: BigNumber
+testsubBNNegNeg = subBN [-1,2,3] [-4,5,6]
+
+{- Test mulBN with two positive numbers -}
+testMulBNPosPos :: BigNumber
+testMulBNPosPos = mulBN [1,2,3] [4,5,6]
+
+{- Test mulBN with one positive and one negative number (in that order) -}
+testMulBNPosNeg :: BigNumber
+testMulBNPosNeg = mulBN [1,2,3] [-4,5,6]
+
+{- Test mulBN with one negative and one positive number (in that order) -}
+testMulBNNegPos :: BigNumber
+testMulBNNegPos = mulBN [-1,2,3] [4,5,6]
+
+{- Test mulBN with two negative numbers -}
+testMulBNNegNeg :: BigNumber
+testMulBNNegNeg = mulBN [-1,2,3] [-4,5,6]
+
+{- Test divBN with two positive numbers -}
+testDivBNPosPos :: (BigNumber, BigNumber)
+testDivBNPosPos = divBN [4,5,6] [3]
+
+{- Test divBN with one positive and one negative number (in that order) -}
+testDivBNPosNeg :: (BigNumber, BigNumber)
+testDivBNPosNeg = divBN [4,5,6] [-3]
+
+{- Test divBN with one negative and one positive number (in that order) -}
+testDivBNNegPos :: (BigNumber, BigNumber)
+testDivBNNegPos = divBN [-4,5,6] [3]
+
+{- Test divBN with two negative numbers -}
+testDivBNNegNeg :: (BigNumber, BigNumber)
+testDivBNNegNeg = divBN [-4,5,6] [-3]
+
+{- Test safeDivBN with two positive numbers -}
+testSafeDivBNPosPos :: Maybe (BigNumber, BigNumber)
+testSafeDivBNPosPos = safeDivBN [4,5,6] [3]
+
+{- Test safeDivBN with one positive and one negative number (in that order) -}
+testSafeDivBNPosNeg :: Maybe (BigNumber, BigNumber)
+testSafeDivBNPosNeg = safeDivBN [4,5,6] [-3]
+
+{- Test safeDivBN with one negative and one positive number (in that order) -}
+testSafeDivBNNegPos :: Maybe (BigNumber, BigNumber)
+testSafeDivBNNegPos = safeDivBN [-4,5,6] [3]
+
+{- Test safeDivBN with two negative numbers -}
+testSafeDivBNNegNeg :: Maybe (BigNumber, BigNumber)
+testSafeDivBNNegNeg = safeDivBN [-4,5,6] [-3]
+
+{- Test safeDivBN with one positive and zero (in that order) -}
+testSafeDivBNPosZero :: Maybe (BigNumber, BigNumber)
+testSafeDivBNPosZero = safeDivBN [4,5,6] [0]
+
+{- Test safeDivBN with one negative and zero (in that order) -}
+testSafeDivBNNegZero :: Maybe (BigNumber, BigNumber)
+testSafeDivBNNegZero = safeDivBN [-4,5,6] [0]
