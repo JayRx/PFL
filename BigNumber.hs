@@ -21,42 +21,43 @@ output :: BigNumber -> String
 output bigNumberInput =
    concat (map (\x -> show x) bigNumberInput)
 
+-- Aux Functions
 
---somaBN :: BigNumber -> BigNumber -> BigNumber
---somaBN first second =
-
---  if ((length second <= 1) && (length first <= 1))
---    then digitSum
---  else if ((length second == 0) && (length first >= 1))
---    then digitSum ++ somaBN (tail first) [0]
---  else if ((length first == 0) && (length second >= 1))
---    then digitSum ++ somaBN [0] (tail second)
---  else digitSum ++ somaBN (tail first) (tail second)
---  where
---    firstDigit = if (length first /= 0) then head first else 0
---    secondDigit = if (length second /= 0) then head second else 0
---    digitSum = [firstDigit + secondDigit]
-
+{- Removes all unecessary 0s at the start of a BigNumber -}
 removeZerosBN :: BigNumber -> BigNumber
 removeZerosBN (0:[]) = [0]
 removeZerosBN (0:xs) = xs
 removeZerosBN xs = xs
 
+{- Changes the sign of a BigNumber
+  If it's positive add a minus (-) to the first digit of the BigNumber
+  If it's negative remove the minus (-) frin the first digit of the BigNumber
+-}
 changeSignBN :: BigNumber -> BigNumber
 changeSignBN (x:xs) = (-x):xs
 
+{- Same as changeSignBN but also removes all unecessary 0s at the start of a BigNumber -}
 changeSignFormatBN :: BigNumber -> BigNumber
 changeSignFormatBN xs = changeSignBN (removeZerosBN xs)
 
+{- Same as changeSignBN but for a pair of BigNumbers in the format (BigNumber, BigNumber) -}
 changeSignFormatPair :: (BigNumber, BigNumber) -> (BigNumber, BigNumber)
 changeSignFormatPair (xs, ys) = (changeSignFormatBN xs, changeSignFormatBN ys)
 
+{- Checks if a BigNumber is negative
+  If it is negative returns True
+  If it is not negative returns False
+-}
 isNegBN :: BigNumber -> Bool
 isNegBN (x:xs)
   = if (x < 0)
     then True
     else False
 
+{- Checks if a positive BigNumber is bigger than other positive BigNumber
+  If it is bigger returns True
+  If it is not bigger returns False
+-}
 isBiggerPosBN :: BigNumber -> BigNumber -> Bool
 isBiggerPosBN (x:[]) (y:[]) = x > y
 isBiggerPosBN (x:xs) (y:ys)
@@ -68,6 +69,10 @@ isBiggerPosBN (x:xs) (y:ys)
       then x > y
     else isBiggerPosBN xs ys
 
+{- Check if a negative BigNumber is bigger than other negative BigNumber
+  If it is bigger returns True
+  If it is not bigger returns False
+-}
 isBiggerNegBN :: BigNumber -> BigNumber -> Bool
 isBiggerNegBN (x:[]) (y:[]) = x < y
 isBiggerNegBN (x:xs) (y:ys)
@@ -79,6 +84,10 @@ isBiggerNegBN (x:xs) (y:ys)
       then x < y
     else isBiggerNegBN xs ys
 
+{- Checks if a BigNumber is bigger than other BigNumber
+  If it is bigger returns True
+  If it is not bigger returns False
+-}
 isBiggerBN :: BigNumber -> BigNumber -> Bool
 isBiggerBN (x:xs) (y:ys)
   = if ((isNegBN (x:xs)) && not (isNegBN (y:ys)))
@@ -88,6 +97,21 @@ isBiggerBN (x:xs) (y:ys)
     else if ((isNegBN (x:xs)) && isNegBN (y:ys))
       then isBiggerNegBN (-x:xs) (-y:ys)
     else isBiggerPosBN (x:xs) (y:ys)
+
+{- Adds zeros at the end of a BigNumber
+  It's equal to multiplying the BigNumber by 10^n where 'n' is the second argument of the function
+-}
+addZeros :: BigNumber -> Int -> BigNumber
+addZeros xs n = xs ++ (map (*0) [1..n])
+
+{- Fixes the carry of a BigNumber
+  Used in the mulBN function
+  Ex: [2,3,12] will become [2,4,2]
+-}
+fixCarry :: BigNumber -> BigNumber
+fixCarry xs = removeZerosBN (reverse (fixCarry_aux (reverse xs) 0))
+  where fixCarry_aux [] c = [c]
+        fixCarry_aux (x:xs) c = mod (x+c) 10:fixCarry_aux (xs) (div (x+c) 10)
 
 -- Ex 2.4
 somaBN :: BigNumber -> BigNumber -> BigNumber
@@ -138,28 +162,6 @@ subBN a b
             else (10 + aux):subBN_aux (xs) (ys) 1
             where aux = x - y
 
---subBN :: BigNumber -> BigNumber -> BigNumber
---subBN first second =
-
---  if ((length second <= 1) && (length first <= 1))
---    then [firstDigit - secondDigit]
---  else if ((length second == 0) && (length first >= 1))
---    then [firstDigit - secondDigit] ++ subBN (tail first) [0]
---  else if ((length first == 0) && (length second >= 1))
---    then [firstDigit - secondDigit] ++ subBN [0] (tail second)
---  else [firstDigit - secondDigit] ++ subBN (tail first) (tail second)
---  where
---    firstDigit = if (length first /= 0) then head first else 0
---    secondDigit = if (length second /= 0) then head second else 0
-
-addZeros :: BigNumber -> Int -> BigNumber
-addZeros xs n = xs ++ (map (*0) [1..n])
-
-fixCarry :: BigNumber -> BigNumber
-fixCarry xs = removeZerosBN (reverse (fixCarry_aux (reverse xs) 0))
-  where fixCarry_aux [] c = [c]
-        fixCarry_aux (x:xs) c = mod (x+c) 10:fixCarry_aux (xs) (div (x+c) 10)
-
 -- Ex 2.6
 mulBN :: BigNumber -> BigNumber -> BigNumber
 mulBN a b =
@@ -172,13 +174,6 @@ mulBN a b =
   else mulBN_aux a b
   where mulBN_aux xs (y:[]) = fixCarry (map (*y) xs)
         mulBN_aux xs (y:ys) = somaBN (addZeros (fixCarry (map (*y) xs)) (length ys)) (mulBN_aux xs ys)
-
--- mulBN :: BigNumber -> BigNumber -> BigNumber
--- mulBN first second =
---  if (length first == 1)
---    then currentSum
---  else somaBN currentSum (mulBN (tail first) ([0] ++ second))
---  where currentSum = map (* head first) second
 
 -- Ex 2.7
 divBN :: BigNumber -> BigNumber -> (BigNumber, BigNumber)
