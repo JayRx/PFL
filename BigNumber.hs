@@ -6,7 +6,8 @@ module BigNumber (BigNumber (..),
                   mulBN,
                   divBN,
                   safeDivBN,
-                  isBiggerBN) where
+                  isBiggerBN,
+                  fixCarry) where
 
 -- Ex 2.1
 type BigNumber = [Int]
