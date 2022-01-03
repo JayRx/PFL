@@ -16,29 +16,29 @@ createBoard(Aux, Size, GameState) :-
   createRow('W', Size, Size, Row),
   append(NGameState, [Row], GameState).
 
-createRow('W', 0, _, ['W']).
+createRow('W', 1, _, ['W']).
 createRow('W', Size, SizeAux, Row) :-
-  Size > 0,
+  Size > 1,
   Size == SizeAux,
   NSize is Size - 1,
   createRow('W', NSize, SizeAux, NRow),
   append(NRow, ['W'], Row).
 createRow('W', Size, SizeAux, Row) :-
-  Size > 0,
+  Size > 1,
   Size \== SizeAux,
   NSize is Size - 1,
   createRow('W', NSize, SizeAux, NRow),
   append(NRow, ['-'], Row).
 
-createRow('B', 0, _, ['-']).
+createRow('B', 1, _, ['-']).
 createRow('B', Size, SizeAux, Row) :-
-  Size > 0,
+  Size > 1,
   Size == SizeAux,
   NSize is Size - 1,
   createRow('B', NSize, SizeAux, NRow),
   append(NRow, ['-'], Row).
 createRow('B', Size, SizeAux, Row) :-
-  Size > 0,
+  Size > 1,
   Size \== SizeAux,
   NSize is Size - 1,
   createRow('B', NSize, SizeAux, NRow),
