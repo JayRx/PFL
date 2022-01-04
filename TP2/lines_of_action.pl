@@ -9,8 +9,10 @@ play :-
   menu,
   initial_state(8, GameState),
   printBoard(GameState),
-  get_cell(0, 1, GameState, Cell),
-  format('Cell [~w][~w]: ~w\n', [0, 1, Cell]).
+  menu_ask_option(ColumnI, RowI),
+  format('Column: ~w Row: ~w\n', [ColumnI, RowI]),
+  get_cell(ColumnI, RowI, GameState, Cell),
+  format('Cell [~w][~w]: ~w\n', [RowI, ColumnI, Cell]).
 
 initial_state(Size, GameState) :-
   createBoard(Size, Size, GameState).
