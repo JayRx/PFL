@@ -13,3 +13,15 @@ get_column(ColumnI, [_|Board], Column) :-
   ColumnI > 0,
   ColumnI2 is ColumnI - 1,
   get_column(ColumnI2, Board, Row).
+
+change_list_value(L, Pos, Value, NL) :-
+  append(L1, L3, L),
+  length(L1, Pos),
+  append(L4, L2, L3),
+  length(L4, 1),
+  append(L1, [Value|L2], NL).
+
+change_cell(ColumnI, RowI, GameState, Value, NGameState) :-
+  get_row(RowI, GameState, Row),
+  change_list_value(Row, ColumnI, Value, NRow),
+  change_list_value(GameState, RowI, NRow, NGameState).

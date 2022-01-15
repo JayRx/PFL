@@ -12,7 +12,9 @@ play :-
   menu_ask_option(ColumnI, RowI),
   format('Column: ~w Row: ~w\n', [ColumnI, RowI]),
   get_cell(ColumnI, RowI, GameState, Cell),
-  format('Cell [~w][~w]: ~w\n', [RowI, ColumnI, Cell]).
+  format('Cell [~w][~w]: ~w\n', [RowI, ColumnI, Cell]),
+  change_cell(ColumnI, RowI, GameState, '0', NGameState),
+  printBoard(NGameState).
 
 initial_state(Size, GameState) :-
   createBoard(Size, Size, GameState).
