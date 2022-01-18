@@ -25,3 +25,14 @@ change_cell(ColumnI, RowI, GameState, Value, NGameState) :-
   get_row(RowI, GameState, Row),
   change_list_value(Row, ColumnI, Value, NRow),
   change_list_value(GameState, RowI, NRow, NGameState).
+
+validate_move(Player, ColumnI, RowI, ColumnIN, RowIN, GameState) :-
+  get_cell(ColumnI, RowI, GameState, Player),
+  MovementColumn is abs(ColumnIN - ColumnI),
+  MovementRow is abs(RowIN - RowI),
+  validate_movement(MovementColumn, MovementRow),
+  get_cell(ColumnIN, RowIN, GameState, '-').
+
+validate_movement(Movement, Movement).
+validate_movement(0, _).
+validate_movement(_, 0).

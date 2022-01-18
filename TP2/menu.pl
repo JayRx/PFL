@@ -9,19 +9,6 @@ menu_header :-
   print('|                                   |'), nl,
   print(' -----------------------------------'), nl.
 
-menu_ask_option(ColumnI, RowI) :-
-  print('What piece do you want to move? (Ex: A1): '),
-  get_char(Column),
-  get_char(Row),
-  validate_column(Column),
-  validate_row(Row),
-  column_to_int(Column, ColumnI),
-  row_to_int(Row, RowI).
-menu_ask_option(ColumnI, RowI) :-
-  skip_line,
-  print('Not a valid position!\n'),
-  menu_ask_option(ColumnI, RowI).
-
 validate_column('A').
 validate_column('B').
 validate_column('C').
@@ -57,3 +44,17 @@ row_to_int('5', 4).
 row_to_int('6', 5).
 row_to_int('7', 6).
 row_to_int('8', 7).
+
+menu_ask_position(Text, ColumnI, RowI) :-
+  print(Text),
+  get_char(Column),
+  get_char(Row),
+  validate_column(Column),
+  validate_row(Row),
+  column_to_int(Column, ColumnI),
+  row_to_int(Row, RowI), !.
+
+menu_ask_position(Text, ColumnI, RowI) :-
+  skip_line,
+  print('Not a valid position!\n'),
+  menu_ask_position(Text, ColumnI, RowI).
