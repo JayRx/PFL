@@ -9,8 +9,9 @@ play :-
   menu,
   initial_state(8, GameState),
   printBoard(GameState),
-  move_piece('B', GameState, NGameState),
-  printBoard(NGameState).
+  check_game_over(GameState).
+  %move_piece('B', GameState, NGameState),
+  %printBoard(NGameState).
 
 initial_state(Size, GameState) :-
   createBoard(Size, Size, GameState).
@@ -30,3 +31,8 @@ move_piece(Player, GameState, NGameState) :-
   skip_line,
   print('Not a valid move!\n'),
   move_piece(Player, GameState, NGameState).
+
+check_game_over(GameState) :-
+count_pieces('B', GameState, BlackPieces),
+count_pieces('W', GameState, WhitePieces),
+format('Black Pieces: ~w\tWhite Pieces: ~w', [BlackPieces, WhitePieces]).

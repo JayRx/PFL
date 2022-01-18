@@ -36,3 +36,19 @@ validate_move(Player, ColumnI, RowI, ColumnIN, RowIN, GameState) :-
 validate_movement(Movement, Movement).
 validate_movement(0, _).
 validate_movement(_, 0).
+
+count_pieces(_, [], 0).
+
+count_pieces(Player, [Row|GameState], Pieces) :-
+  count_pieces(Player, GameState, Pieces2),
+  count_pieces_row(Player, Row, PiecesRow),
+  Pieces is Pieces2 + PiecesRow.
+
+count_pieces_row(_, [], 0).
+
+count_pieces_row(Player, [Player|Row], Pieces) :-
+  count_pieces_row(Player, Row, Pieces2),
+  Pieces is Pieces2 + 1.
+
+count_pieces_row(Player, [_|Row], Pieces) :-
+  count_pieces_row(Player, Row, Pieces).
