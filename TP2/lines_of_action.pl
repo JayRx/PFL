@@ -1,16 +1,17 @@
+:-use_module(library(lists)).
+:-use_module(library(system)).
 :-consult('auxiliary.pl').
 :-consult('board_creation.pl').
 :-consult('board_print.pl').
 :-consult('board_control.pl').
 :-consult('menu.pl').
-:-use_module(library(lists)).
-:-use_module(library(system)).
+:-consult('rules.pl').
 
 play :-
   menu,
   initial_state(8, GameState),
   printBoard(GameState),
-  %check_game_over(GameState),
+  check_game_over(GameState),
   move_piece('B', GameState, NGameState),
   printBoard(NGameState).
 

@@ -1,5 +1,5 @@
 menu :-
-  menu_header.
+  menu_header2.
 
 menu_header :-
   nl,
@@ -8,6 +8,9 @@ menu_header :-
   print('|     WELCOME TO LINES OF ACTION    |'), nl,
   print('|                                   |'), nl,
   print(' -----------------------------------'), nl.
+
+menu_header2 :-
+  print_file('menu.txt').
 
 validate_column('A').
 validate_column('B').
