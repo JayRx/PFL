@@ -12,7 +12,7 @@ get_column(0, [Column|_], Column).
 get_column(ColumnI, [_|Board], Column) :-
   ColumnI > 0,
   ColumnI2 is ColumnI - 1,
-  get_column(ColumnI2, Board, Row).
+  get_column(ColumnI2, Board, Column).
 
 change_list_value(L, Pos, Value, NL) :-
   append(L1, L3, L),
@@ -27,11 +27,49 @@ change_cell(ColumnI, RowI, GameState, Value, NGameState) :-
   change_list_value(GameState, RowI, NRow, NGameState).
 
 validate_move(Player, ColumnI, RowI, ColumnIN, RowIN, GameState) :-
-  get_cell(ColumnI, RowI, GameState, Player),
-  MovementColumn is abs(ColumnIN - ColumnI),
-  MovementRow is abs(RowIN - RowI),
-  validate_movement(MovementColumn, MovementRow),
-  get_cell(ColumnIN, RowIN, GameState, '-').
+  MovementColumn is ColumnIN - ColumnI,
+  MovementRow is RowIN - RowI,
+  MovementColumnAbs is abs(MovementColumn),
+  MovementRowAbs is abs(MovementRow),
+  format('Move Column: ~w\tMove Row: ~w\n', [MovementColumnAbs, MovementRowAbs]),
+  validate_movement(MovementColumnAbs, MovementColumnAbs),
+  divideAbs(MovementColumn, MovementColumnDir),
+  divideAbs(MovementRow, MovementRowDir),
+  get_movement_cells(ColumnI, RowI, MovementColumnDir, MovementRowDir, GameState, Counter1),!,
+  Counter2 is max(MovementColumnAbs, MovementRowAbs),
+  format('Counter1: ~w\tCounter2: ~w\n', [Counter1, Counter2]),
+  Counter1 == Counter2.
+
+get_movement_cells(ColumnI, RowI, MovementColumnDir, MovementRowDir, GameState, Counter) :-
+  format('MovementRowDir: ~w\tMovementColumnDir: ~w\n', [MovementRowDir, MovementColumnDir]),
+  length(GameState, BoardSize),
+  ColumnI2 is ColumnI + MovementColumnDir,
+  RowI2 is RowI + MovementRowDir,
+  count_movement_cells(ColumnI2, RowI2, MovementColumnDir, MovementRowDir, GameState, BoardSize, Counter1),
+  count_movement_cells(ColumnI, RowI, -MovementColumnDir, -MovementRowDir, GameState, BoardSize, Counter2),
+  Counter is Counter1 + Counter2.
+
+count_movement_cells(ColumnI, RowI, MovementColumnDir, MovementRowDir, GameState, BoardSize, Counter) :-
+  ColumnI >= 0,
+  RowI >= 0,
+  ColumnI < BoardSize,
+  RowI < BoardSize,
+  \+ get_cell(ColumnI, RowI, GameState, '-'),
+  ColumnI2 is ColumnI + MovementColumnDir,
+  RowI2 is RowI + MovementRowDir,
+  count_movement_cells(ColumnI2, RowI2, MovementColumnDir, MovementRowDir, GameState, BoardSize, Counter2),
+  Counter is Counter2 + 1.
+
+count_movement_cells(ColumnI, RowI, MovementColumnDir, MovementRowDir, GameState, BoardSize, Counter) :-
+  ColumnI >= 0,
+  RowI >= 0,
+  ColumnI < BoardSize,
+  RowI < BoardSize,
+  ColumnI2 is ColumnI + MovementColumnDir,
+  RowI2 is RowI + MovementRowDir,
+  count_movement_cells(ColumnI2, RowI2, MovementColumnDir, MovementRowDir, GameState, BoardSize, Counter).
+
+count_movement_cells(_, _, _, _, _, _, 0).
 
 validate_movement(Movement, Movement).
 validate_movement(0, _).
