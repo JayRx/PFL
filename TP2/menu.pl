@@ -1,5 +1,7 @@
-menu :-
-  menu_header2.
+menu(Option) :-
+  menu_header,
+  menu_body,
+  get_menu_option(Option).
 
 menu_header :-
   nl,
@@ -7,7 +9,35 @@ menu_header :-
   print('|                                   |'), nl,
   print('|     WELCOME TO LINES OF ACTION    |'), nl,
   print('|                                   |'), nl,
-  print(' -----------------------------------'), nl.
+  print('|-----------------------------------|'), nl.
+
+menu_body :-
+print('|                                   |'), nl,
+print('| What do you want to do?           |'), nl,
+print('|                                   |'), nl,
+print('| 1. Player vs Player               |'), nl,
+print('| 2. Player vs Bot                  |'), nl,
+print('| 3. Bot vs Bot                     |'), nl,
+print('| 4. Rules                          |'), nl,
+print('| 5. Exit                           |'), nl,
+print('|                                   |'), nl,
+print(' -----------------------------------\n'), nl.
+
+get_menu_option(Option) :-
+  print('What is your option? '),
+  get_char(Option),
+  validate_menu_option(Option).
+
+get_menu_option(Option) :-
+  skip_line,
+  print('Not a valid option!\n'),
+  get_menu_option(Option).
+
+validate_menu_option('1').
+validate_menu_option('2').
+validate_menu_option('3').
+validate_menu_option('4').
+validate_menu_option('5').
 
 menu_header2 :-
   print_file('menu.txt').
@@ -58,6 +88,5 @@ menu_ask_position(Text, ColumnI, RowI) :-
   row_to_int(Row, RowI), !.
 
 menu_ask_position(Text, ColumnI, RowI) :-
-  skip_line,
   print('Not a valid position!\n'),
   menu_ask_position(Text, ColumnI, RowI).

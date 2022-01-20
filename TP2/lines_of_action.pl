@@ -8,8 +8,18 @@
 :-consult('rules.pl').
 
 play :-
-  menu,
-  initial_state(8, GameState),
+  menu(Option),
+  router(Option).
+
+router('1') :- pvp.
+router('2').
+router('3').
+router('4') :- rules.
+router('5') :- print('Exiting...\n').
+
+pvp :-
+  %initial_state(8, GameState),
+  custom_initial_state(GameState),
   printBoard(GameState),
   check_game_over(GameState),
   move_piece('B', GameState, NGameState),
@@ -41,3 +51,37 @@ check_game_over(GameState) :-
 count_pieces('B', GameState, BlackPieces),
 count_pieces('W', GameState, WhitePieces),
 format('Black Pieces: ~w\tWhite Pieces: ~w\n', [BlackPieces, WhitePieces]).
+
+custom_initial_state([
+  ['-','B','B','B','B','B','B','-'],
+  ['W','-','-','-','-','-','-','W'],
+  ['W','-','-','-','-','-','-','W'],
+  ['W','-','-','-','-','-','-','W'],
+  ['W','-','-','-','-','-','-','W'],
+  ['W','-','-','-','-','-','-','W'],
+  ['W','-','-','-','-','-','-','W'],
+  ['-','B','B','B','B','B','B','-']
+]).
+
+
+test_custom_initial_state([
+  ['-','B','B','B','B','B','B','-'],
+  ['-','-','-','-','-','-','-','-'],
+  ['-','-','-','-','-','-','-','-'],
+  ['-','-','-','-','-','-','-','-'],
+  ['-','-','-','-','-','-','-','-'],
+  ['-','-','-','-','-','-','-','-'],
+  ['-','-','-','-','-','-','-','-'],
+  ['-','B','B','B','B','B','B','-']
+]).
+
+test(FirstColumn, FirstRow) :-
+  test_custom_initial_state(GameState),
+  findall(Column-Row, get_piece_occorrunces('B', GameState, Column, Row), Occorrunces),
+  %nth0(0, Occorrunces, FirstColumn-FirstRow),
+  last(Occorrunces, FirstColumn-FirstRow).
+
+get_piece_occorrunces(Player, GameState, ColumnI, RowI) :-
+  nth0(RowI, GameState, Row),
+  member(Player, Row),
+  nth0(ColumnI, Row, Player).
