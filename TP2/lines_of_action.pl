@@ -31,7 +31,9 @@ play_loop('PvP', GameState) :-
   play_loop('PvP', NGameState).
 
 play_loop('PvB', GameState) :-
-  turn_bot('B', GameState, GameStateAux).
+  turn('B', GameState, GameStateAux),
+  turn_bot('W', GameStateAux, NGameState),
+  play_loop('PvB', NGameState).
 
 play_loop('BvB', GameState) :-
   sleep(1),
