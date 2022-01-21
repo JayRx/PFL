@@ -31,11 +31,12 @@ validate_move(Player, ColumnI, RowI, ColumnIN, RowIN, GameState) :-
   MovementRow is RowIN - RowI,
   MovementColumnAbs is abs(MovementColumn),
   MovementRowAbs is abs(MovementRow),
-  validate_movement(MovementColumnAbs, MovementColumnAbs),
+  validate_movement(MovementColumn, MovementRow),
   divideAbs(MovementColumn, MovementColumnDir),
   divideAbs(MovementRow, MovementRowDir),
   get_movement_cells(ColumnI, RowI, MovementColumnDir, MovementRowDir, GameState, Counter1),
   Counter2 is max(MovementColumnAbs, MovementRowAbs),
+  !,
   Counter1 == Counter2,
   check_cells_in_between(Player, ColumnI, RowI, ColumnIN, RowIN, GameState).
 
@@ -166,6 +167,6 @@ edge([X,Y], [X1,Y1], Size) :-
     Y1 < Size.
 
 check_all_pieces_together(Player, GameState) :-
-  setof([Column,Row], get_piece_occorrunces('B', GameState, Column, Row), Occorrunces),
+  setof([Column,Row], get_piece_occorrunces(Player, GameState, Column, Row), Occorrunces),
   nth0(0, Occorrunces, [FirstColumn,FirstRow]),
-  path_to_all([FirstColumn,FirstRow], Occorrunces, GameState, 'B').
+  path_to_all([FirstColumn,FirstRow], Occorrunces, GameState, Player).

@@ -1,4 +1,4 @@
-printBoard(Board) :-
+display_game(Board) :-
   nl,nl,
   print('    A B C D E F G H '), nl,
   print('   -----------------'), nl,
