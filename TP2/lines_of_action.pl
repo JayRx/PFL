@@ -11,33 +11,51 @@ play :-
   menu(Option),
   router(Option).
 
-router('1') :- pvp.
-router('2').
-router('3').
+router('1') :- play('PvP').
+router('2') :- play('PvB').
+router('3') :- play('BvB').
 router('4') :- rules.
 router('5') :- print('Exiting...\n').
 
-pvp :-
-  %initial_state(8, GameState),
-  custom_initial_state(GameState),
+play(GameMode) :-
+  initial_state(8, GameState),
+  %test_custom_initial_state(GameState),
+  play_loop(GameMode, GameState).
+
+play_loop('PvP', GameState) :-
   printBoard(GameState),
-  \+ check_game_over(GameState),
-  move_piece('B', GameState, NGameState),
-  printBoard(NGameState).
+  turn('B', GameState, GameStateAux),
+  turn('W', GameStateAux, NGameState),
+  play_loop('PvP', NGameState).
+
+play_loop('PvB', GameState).
+
+play_loop('BvB', GameState).
+
+turn(Player, GameState, NGameState) :-
+  move_piece(Player, GameState, NGameState),
+  printBoard(NGameState),
+  \+ check_game_over(GameState).
 
 initial_state(Size, GameState) :-
   createBoard(Size, Size, GameState).
 
-move_piece(Player, GameState, NGameState) :-
-  menu_ask_position('What piece do you want to move? (Ex: A1): ', ColumnI, RowI),
-  get_cell(ColumnI, RowI, GameState, Cell),
-  format('Column: ~w Row: ~w Cell: ~w\n', [ColumnI, RowI, Cell]),
+move_piece('B', GameState, NGameState) :-
+  menu_ask_position('Player Black - What piece do you want to move? (Ex: A1): ', ColumnI, RowI),
   get_cell(ColumnI, RowI, GameState, Player),
   skip_line,
-  menu_ask_position('To where do you want to move this piece? (Ex: A1): ', ColumnIN, RowIN),
-  get_cell(ColumnIN, RowIN, GameState, CellN),
-  format('Column: ~w Row: ~w Cell: ~w\n', [ColumnIN, RowIN, CellN]),
-  get_cell(ColumnIN, RowIN, GameState, '-'),
+  menu_ask_position('Player Black - To where do you want to move this piece? (Ex: A1): ', ColumnIN, RowIN),
+  \+get_cell(ColumnIN, RowIN, GameState, Player),
+  validate_move(Player, ColumnI, RowI, ColumnIN, RowIN, GameState),
+  change_cell(ColumnI, RowI, GameState, '-', GameStateAux),
+  change_cell(ColumnIN, RowIN, GameStateAux, Player, NGameState).
+
+move_piece('W', GameState, NGameState) :-
+  menu_ask_position('Player White - What piece do you want to move? (Ex: A1): ', ColumnI, RowI),
+  get_cell(ColumnI, RowI, GameState, Player),
+  skip_line,
+  menu_ask_position('Player White - To where do you want to move this piece? (Ex: A1): ', ColumnIN, RowIN),
+  \+get_cell(ColumnIN, RowIN, GameState, Player),
   validate_move(Player, ColumnI, RowI, ColumnIN, RowIN, GameState),
   change_cell(ColumnI, RowI, GameState, '-', GameStateAux),
   change_cell(ColumnIN, RowIN, GameStateAux, Player, NGameState).
@@ -48,19 +66,13 @@ move_piece(Player, GameState, NGameState) :-
   move_piece(Player, GameState, NGameState).
 
 check_game_over(GameState) :-
-  count_pieces('B', GameState, 1),
-  play.
-
-check_game_over(GameState) :-
-  count_pieces('W', GameState, 1),
-  play.
-
-check_game_over(GameState) :-
   check_all_pieces_together('B', GameState),
+  format('Player ~w Won!\n', ['B']),
   play.
 
 check_game_over(GameState) :-
   check_all_pieces_together('W', GameState),
+  format('Player ~w Won!\n', ['W']),
   play.
 
 custom_initial_state([
@@ -75,12 +87,12 @@ custom_initial_state([
 ]).
 
 test_custom_initial_state([
-  ['B','B','B','B','-','-','-','-'],
-  ['B','-','B','-','-','-','-','-'],
-  ['-','-','B','B','-','-','-','-'],
-  ['-','-','-','B','-','-','-','-'],
-  ['-','-','-','-','B','-','-','-'],
-  ['-','-','-','-','-','B','-','-'],
-  ['-','-','-','-','B','-','-','-'],
-  ['-','-','-','-','-','-','-','B']
+  ['-','-','B','-','-','-','-','B'],
+  ['-','-','B','-','-','-','-','W'],
+  ['-','-','-','-','-','-','-','-'],
+  ['-','-','B','-','-','-','-','-'],
+  ['-','-','-','-','-','-','-','-'],
+  ['-','-','-','-','-','-','-','-'],
+  ['-','-','-','-','-','-','-','-'],
+  ['-','-','-','-','-','-','-','W']
 ]).

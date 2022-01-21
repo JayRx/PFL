@@ -26,7 +26,7 @@ change_cell(ColumnI, RowI, GameState, Value, NGameState) :-
   change_list_value(Row, ColumnI, Value, NRow),
   change_list_value(GameState, RowI, NRow, NGameState).
 
-validate_move(_, ColumnI, RowI, ColumnIN, RowIN, GameState) :-
+validate_move(Player, ColumnI, RowI, ColumnIN, RowIN, GameState) :-
   MovementColumn is ColumnIN - ColumnI,
   MovementRow is RowIN - RowI,
   MovementColumnAbs is abs(MovementColumn),
@@ -38,7 +38,24 @@ validate_move(_, ColumnI, RowI, ColumnIN, RowIN, GameState) :-
   get_movement_cells(ColumnI, RowI, MovementColumnDir, MovementRowDir, GameState, Counter1),!,
   Counter2 is max(MovementColumnAbs, MovementRowAbs),
   format('Counter1: ~w\tCounter2: ~w\n', [Counter1, Counter2]),
-  Counter1 == Counter2.
+  Counter1 == Counter2,
+  check_cells_in_between(Player, ColumnI, RowI, ColumnIN, RowIN, GameState).
+
+check_cells_in_between(_, Column, Row, Column, Row, _).
+check_cells_in_between(Player, ColumnI, RowI, ColumnIN, RowIN, GameState) :-
+  MovementColumn is ColumnIN - ColumnI,
+  MovementRow is RowIN - RowI,
+  divideAbs(MovementColumn, CMove),
+  divideAbs(MovementRow, RMove),
+  Column is ColumnI + CMove,
+  Row is RowI + RMove,
+  (
+    get_cell(ColumnI, RowI, GameState, Player)
+  ;
+    get_cell(ColumnI, RowI, GameState, '-')
+  ),
+  check_cells_in_between(Player, Column, Row, ColumnIN, RowIN, GameState).
+
 
 get_movement_cells(ColumnI, RowI, MovementColumnDir, MovementRowDir, GameState, Counter) :-
   format('MovementRowDir: ~w\tMovementColumnDir: ~w\n', [MovementRowDir, MovementColumnDir]),
