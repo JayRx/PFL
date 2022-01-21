@@ -1,5 +1,7 @@
 :-use_module(library(lists)).
 :-use_module(library(system)).
+:-use_module(library(between)).
+:-use_module(library(random)).
 :-consult('auxiliary.pl').
 :-consult('board_creation.pl').
 :-consult('board_print.pl').
@@ -18,22 +20,33 @@ router('4') :- rules.
 router('5') :- print('Exiting...\n').
 
 play(GameMode) :-
-  initial_state(8, GameState),
-  %test_custom_initial_state(GameState),
+  %initial_state(8, GameState),
+  custom_initial_state(GameState),
+  printBoard(GameState),
   play_loop(GameMode, GameState).
 
 play_loop('PvP', GameState) :-
-  printBoard(GameState),
   turn('B', GameState, GameStateAux),
   turn('W', GameStateAux, NGameState),
   play_loop('PvP', NGameState).
 
-play_loop('PvB', GameState).
+play_loop('PvB', GameState) :-
+  turn_bot('B', GameState, GameStateAux).
 
-play_loop('BvB', GameState).
+play_loop('BvB', GameState) :-
+  sleep(1),
+  turn_bot('B', GameState, GameStateAux),
+  sleep(1),
+  turn_bot('W', GameStateAux, NGameState),
+  play_loop('BvB', NGameState).
 
 turn(Player, GameState, NGameState) :-
   move_piece(Player, GameState, NGameState),
+  printBoard(NGameState),
+  \+ check_game_over(GameState).
+
+turn_bot(Player, GameState, NGameState) :-
+  move_piece_bot(Player, GameState, NGameState),
   printBoard(NGameState),
   \+ check_game_over(GameState).
 
@@ -59,6 +72,26 @@ move_piece('W', GameState, NGameState) :-
   validate_move(Player, ColumnI, RowI, ColumnIN, RowIN, GameState),
   change_cell(ColumnI, RowI, GameState, '-', GameStateAux),
   change_cell(ColumnIN, RowIN, GameStateAux, Player, NGameState).
+
+move_piece_bot(Player, GameState, NGameState) :-
+  setof([ColumnI-RowI, ColumnIN-RowIN], get_bot_move(Player, ColumnI, RowI, ColumnIN, RowIN, GameState), Moves),
+  random_member([CI-RI, CIN-RIN], Moves),
+  format('Move: ~w\n', [[CI-RI, CIN-RIN]]),
+  change_cell(CI, RI, GameState, '-', GameStateAux),
+  change_cell(CIN, RIN, GameStateAux, Player, NGameState).
+
+get_bot_move(Player, ColumnI, RowI, ColumnIN, RowIN, GameState) :-
+  between(0, 7, ColumnI),
+  between(0, 7, RowI),
+  between(0, 7, ColumnIN),
+  between(0, 7, RowIN),
+  get_cell(ColumnI, RowI, GameState, Player),
+  \+get_cell(ColumnIN, RowIN, GameState, Player),
+  validate_move(Player, ColumnI, RowI, ColumnIN, RowIN, GameState).
+
+test :-
+  custom_initial_state(GameState),
+  check_cells_in_between('B', 1, 0, 0, 1, GameState).
 
 move_piece(Player, GameState, NGameState) :-
   skip_line,

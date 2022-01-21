@@ -31,34 +31,33 @@ validate_move(Player, ColumnI, RowI, ColumnIN, RowIN, GameState) :-
   MovementRow is RowIN - RowI,
   MovementColumnAbs is abs(MovementColumn),
   MovementRowAbs is abs(MovementRow),
-  format('Move Column: ~w\tMove Row: ~w\n', [MovementColumnAbs, MovementRowAbs]),
   validate_movement(MovementColumnAbs, MovementColumnAbs),
   divideAbs(MovementColumn, MovementColumnDir),
   divideAbs(MovementRow, MovementRowDir),
-  get_movement_cells(ColumnI, RowI, MovementColumnDir, MovementRowDir, GameState, Counter1),!,
+  get_movement_cells(ColumnI, RowI, MovementColumnDir, MovementRowDir, GameState, Counter1),
   Counter2 is max(MovementColumnAbs, MovementRowAbs),
-  format('Counter1: ~w\tCounter2: ~w\n', [Counter1, Counter2]),
   Counter1 == Counter2,
   check_cells_in_between(Player, ColumnI, RowI, ColumnIN, RowIN, GameState).
 
 check_cells_in_between(_, Column, Row, Column, Row, _).
 check_cells_in_between(Player, ColumnI, RowI, ColumnIN, RowIN, GameState) :-
+  [ColumnI, RowI] \= [ColumnIN, RowIN],
+  between(0, 7, ColumnI),
+  between(0, 7, RowI),
   MovementColumn is ColumnIN - ColumnI,
   MovementRow is RowIN - RowI,
   divideAbs(MovementColumn, CMove),
   divideAbs(MovementRow, RMove),
   Column is ColumnI + CMove,
   Row is RowI + RMove,
+  check_cells_in_between(Player, Column, Row, ColumnIN, RowIN, GameState),
   (
     get_cell(ColumnI, RowI, GameState, Player)
   ;
     get_cell(ColumnI, RowI, GameState, '-')
-  ),
-  check_cells_in_between(Player, Column, Row, ColumnIN, RowIN, GameState).
-
+  ).
 
 get_movement_cells(ColumnI, RowI, MovementColumnDir, MovementRowDir, GameState, Counter) :-
-  format('MovementRowDir: ~w\tMovementColumnDir: ~w\n', [MovementRowDir, MovementColumnDir]),
   length(GameState, BoardSize),
   ColumnI2 is ColumnI + MovementColumnDir,
   RowI2 is RowI + MovementRowDir,
