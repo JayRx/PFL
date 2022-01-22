@@ -105,7 +105,8 @@ count_pieces_row(Player, [Player|Row], Pieces) :-
   count_pieces_row(Player, Row, Pieces2),
   Pieces is Pieces2 + 1.
 
-count_pieces_row(Player, [_|Row], Pieces) :-
+count_pieces_row(Player, [Cell|Row], Pieces) :-
+  Cell \= Player,
   count_pieces_row(Player, Row, Pieces).
 
 get_piece_occorrunces(Player, GameState, ColumnI, RowI) :-

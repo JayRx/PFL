@@ -26,10 +26,10 @@ print(' -----------------------------------\n'), nl.
 get_menu_option(Option) :-
   print('What is your option? '),
   get_char(Option),
+  skip_line,
   validate_menu_option(Option).
 
 get_menu_option(Option) :-
-  skip_line,
   print('Not a valid option!\n'),
   get_menu_option(Option).
 
@@ -82,6 +82,7 @@ menu_ask_position(Text, ColumnI, RowI) :-
   print(Text),
   get_char(Column),
   get_char(Row),
+  skip_line,
   validate_column(Column),
   validate_row(Row),
   column_to_int(Column, ColumnI),
