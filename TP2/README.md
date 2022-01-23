@@ -210,7 +210,7 @@ valid_moves(GameState, ListOfMoves) :-
 
 As we can see, it uses the setof predicate to get a list of valid moves of each player and then it joins both into a single list that will contain every possible valid move in the game.
 
-### 4.5 - Game State Evaluation
+### 4.6 - Game State Evaluation
 To evaluate the current Game State we simply count all the player's pieces and retrive a value based on that.
 Because the objective of the game is to have all pieces grouped, the less pieces we have, the ammount of effort is needed to group all the pieces.
 
@@ -226,7 +226,7 @@ value(GameState, Player, Value) :-
   Value is ValueLog * 42.
 ```
 
-### 4.6 - Computer Moves
+### 4.7 - Computer Moves
 Whenever the computer wants to make move, it initally calculates all the moves it can make and it's value.
 Each move with value is represented by Value-Player-(ColumnFrom, RowFrom)-(ColumnTo, RowTo).
 
