@@ -3,8 +3,8 @@
 ## 1 - Game and Group Identification
 Group: Lines of Action_1
 Made By:
-- João Paulo Silva da Rocha (up201806261) - 50%
-- Lara Machado de Medicis (up201806762) - 50%
+- João Paulo Silva da Rocha (up201806261) - 60%
+- Lara Machado de Medicis (up201806762) - 40%
 
 ## 2 - Instalation and Execution
 - Download the code.
@@ -12,9 +12,9 @@ Made By:
 - Run the 'play' predicate.
 
 ## 3 - Game Description
-Lines of Action is a strategy board game for two players invented by Claude Soucie.
-The objective of the game is to connect all of one player's pieces into a single group.
-It is played in an 8x8 checkers board and the players can move the pieces any number of squares in the same direction (horizontally, vertically or diagonally).
+Lines of Action is an abstract strategy board game for two players invented by Claude Soucie where the player’s goal is to have all of their pieces form a contiguous structure. This means that all pieces of the same colour have to be connected in any direction (horizontally, vertically or diagonally).
+
+The game is played on an 8x8 board, with 6 black pieces in the center of the first row and 6 black pieces in the center of the last row, and simillarly, 6 white pieces in the center of the first column and 6 white pieces in the center of the last column. The players can move the pieces any number of squares as there are pieces in the same direction (horizontally, vertically or diagonally).
 
 ### 3.1 - Start of the game
 - Black moves first. Each player moves one of his pieces in every turn.
@@ -29,23 +29,30 @@ It is played in an 8x8 checkers board and the players can move the pieces any nu
 - If a move simultaneously creates a win for both players, the player who has made the move is the winner.
 
 Sources of information:
-[Lines of Action - Wikipedia](https://en.wikipedia.org/wiki/Lines_of_Action)
-[Lines of Action - Rules](https://www.ludoteka.com/clasika/lines-of-action.html)
+- [Lines of Action - Wikipedia](https://en.wikipedia.org/wiki/Lines_of_Action)
+- [Lines of Action - Rules](https://www.ludoteka.com/clasika/lines-of-action.html)
+- [Lines of Action - Board Game Geek](https://boardgamegeek.com/boardgame/3406/lines-action)
 
 ## 4 - Game Logic
 ### 4.1 - Game State Representation
 The Game State is represented by a matrix with the dimensions of the playing board. The Black player pieces are represented by 'B', the White player pieces by 'W' and the blank cells represented by '-'.
 
 The following screenshot is a representation of the initial Game State:
+
 ![Initial GameState](https://i.imgur.com/5GPwSDC.png)
+
 As we can see, we above the Black pieces on the top and bottom rows and the White pieces in the other rows.
 
 The following screenshot is a representation of a Game State in the middle of a game:
+
 ![Mid GameState](https://i.imgur.com/hTfHybj.png)
+
 We can also observe the Black player's board value and the move the White player will make next.
 
 The following screenshot is a representation of a final Game State:
+
 ![Final GameState](https://i.imgur.com/6x0ddDE.png)
+
 As we can see, all black pieces are together so the Black player won the game.
 
 ### 4.2 - Game State Visualization
@@ -204,7 +211,7 @@ valid_moves(GameState, ListOfMoves) :-
 
 As we can see, it uses the setof predicate to get a list of valid moves of each player and then it joins both into a single list that will contain every possible valid move in the game.
 
-### 4.5 - Game State Evaluation
+### 4.6 - Game State Evaluation
 To evaluate the current Game State we simply count all the player's pieces and retrive a value based on that.
 Because the objective of the game is to have all pieces grouped, the less pieces we have, the ammount of effort is needed to group all the pieces.
 
@@ -220,7 +227,7 @@ value(GameState, Player, Value) :-
   Value is ValueLog * 42.
 ```
 
-### 4.6 - Computer Moves
+### 4.7 - Computer Moves
 Whenever the computer wants to make move, it initally calculates all the moves it can make and it's value.
 Each move with value is represented by Value-Player-(ColumnFrom, RowFrom)-(ColumnTo, RowTo).
 
@@ -274,6 +281,7 @@ For future work, we could:
 - Change the Game State evaluation predicate to represent a more viable and accurate Game State value.
 
 ## 6 - Bibliography
-[Lines of Action - Wikipedia](https://en.wikipedia.org/wiki/Lines_of_Action)
-[Lines of Action - Rules](https://www.ludoteka.com/clasika/lines-of-action.html)
-[SICStus built-in predicates](https://sicstus.sics.se/sicstus/docs/3.7.1/html/sicstus_10.html)
+- [Lines of Action - Wikipedia](https://en.wikipedia.org/wiki/Lines_of_Action)
+- [Lines of Action - Rules](https://www.ludoteka.com/clasika/lines-of-action.html)
+- [Lines of Action - Board Game Geek](https://boardgamegeek.com/boardgame/3406/lines-action)
+- [SICStus built-in predicates](https://sicstus.sics.se/sicstus/docs/3.7.1/html/sicstus_10.html)
