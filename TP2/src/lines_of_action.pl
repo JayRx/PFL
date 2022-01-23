@@ -23,7 +23,7 @@ play :-
 router('1') :- play('PvP').
 router('2') :- play('PvB').
 router('3') :- play('BvB').
-router('4') :- rules.
+router('4') :- rules, play.
 router('5') :- print('Exiting...\n').
 
 % initial_state(+Size, -GameState)
@@ -34,8 +34,8 @@ initial_state(Size, GameState) :-
 % play(+GameMode)
 % Starts the Lines of Action game in the given GameMode
 play('PvP') :-
-  initial_state(8, GameState),
-  %test_custom_initial_state(GameState),
+  %initial_state(8, GameState),
+  test_custom_initial_state(GameState),
   display_game(GameState),
   play_loop('PvP', GameState).
 
@@ -88,14 +88,14 @@ play_loop('BvB', GameState, FirstBotLevel, SecondBotLevel) :-
 turn(Player, GameState, NGameState) :-
   move_piece(Player, GameState, NGameState),
   display_game(NGameState),
-  \+ check_game_over(GameState).
+  \+ check_game_over(NGameState, Player).
 
 % turn_bot(+Player, +GameState, -NGameState)
 % Processes the given Bot's (Player) turn and returns a new GameState (NGameState)
 turn_bot(Player, GameState, BotLevel, NGameState) :-
   move_piece_bot(Player, GameState, BotLevel, NGameState),
   display_game(NGameState),
-  \+ check_game_over(GameState).
+  \+ check_game_over(NGameState, Player).
 
 % move(GameState, Move, NewGameState)
 % Validates the given Move and returns a NewGameState
@@ -208,14 +208,24 @@ valid_moves(GameState, ListOfMoves) :-
 
 % check_game_over(+GameState)
 % Checks if it's Game Over in the given GameState and displays the Winner
-check_game_over(GameState) :-
+check_game_over(GameState, 'B') :-
   game_over(GameState, 'B'),
   print('Player Black Won!\n'),
   play.
 
-check_game_over(GameState) :-
+check_game_over(GameState, 'B') :-
   game_over(GameState, 'W'),
   print('Player White Won!\n'),
+  play.
+
+check_game_over(GameState, 'W') :-
+  game_over(GameState, 'W'),
+  print('Player White Won!\n'),
+  play.
+
+check_game_over(GameState, 'W') :-
+  game_over(GameState, 'B'),
+  print('Player Black Won!\n'),
   play.
 
 % game_over(+GameState, +Player)

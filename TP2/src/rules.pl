@@ -30,6 +30,4 @@ rules :-
   print('|                                                                                                             |\n'),
   print('| - If a move simultaneously creates a win for both players, the player who has made the move is the winner.  |\n'),
   print('|                                                                                                             |\n'),
-  print('| - The game ends in a draw if the same position is repeated three times.                                     |\n'),
-  print('|                                                                                                             |\n'),
   print(' ------------------------------------------------------------------------------------------------------------- \n').

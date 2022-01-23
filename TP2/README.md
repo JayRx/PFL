@@ -146,6 +146,47 @@ createRow('B', Size, SizeAux, Row) :-
   append(NRow, ['B'], Row).
 ```
 
+To navigate through the program we developed a simple menu with the following options:
+- Player vs Player - Play the referred Game Mode
+- Player vs Bot - Play the referred Game Mode
+- Bot vs Bot - Play the referred Game Mode
+- Rules - Watch the rules of Lines of Action
+- Exit - Terminate the program
+
+Here we have a representation of this menu:
+
+![Menu](https://i.imgur.com/7bNGLmU.png)
+
+To choose the options we want we just need to write it's number.
+In this example, because we chose the Bot vs Bot Game Mode (Option 3), we will be asked what type of level we want for each bot.
+
+Below we have a representation of the option input and validation for the menu. The validation of the bot level selection and Game position selection is done in a similar way.
+
+``` prolog
+% get_menu_option(-Option)
+% Asks the user for the selected menu option
+get_menu_option(Option) :-
+  print('What is your option? '),
+  get_char(Option),
+  skip_line,
+  validate_menu_option(Option).
+
+get_menu_option(Option) :-
+  print('Not a valid option!\n'),
+  get_menu_option(Option).
+
+% validate_menu_option(?Option)
+% Validates the menu option the user typed
+validate_menu_option('1').
+validate_menu_option('2').
+validate_menu_option('3').
+validate_menu_option('4').
+validate_menu_option('5').
+```
+
+Here we also have a representation of the rules (option 4 in the menu) inside the program:
+![Rules](https://i.imgur.com/tgY7V67.png)
+
 ### 4.3 - Moves Execution
 When it's time to move a piece, the program firstly asks the user from where and to where he wants to move a certain piece. Then, it validates the starting and ending positions and finally checks it is a valid move.
 For a move to be valid all the following clauses must be true:
