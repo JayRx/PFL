@@ -3,8 +3,8 @@
 ## 1 - Game and Group Identification
 Group: Lines of Action_1
 Made By:
-- João Paulo Silva da Rocha (up201806261) - 50%
-- Lara Machado de Medicis (up201806762) - 50%
+- João Paulo Silva da Rocha (up201806261) - 60%
+- Lara Machado de Medicis (up201806762) - 40%
 
 ## 2 - Instalation and Execution
 - Download the code.
