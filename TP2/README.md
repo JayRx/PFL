@@ -29,8 +29,8 @@ It is played in an 8x8 checkers board and the players can move the pieces any nu
 - If a move simultaneously creates a win for both players, the player who has made the move is the winner.
 
 Sources of information:
-[Lines of Action - Wikipedia](https://en.wikipedia.org/wiki/Lines_of_Action)
-[Lines of Action - Rules](https://www.ludoteka.com/clasika/lines-of-action.html)
+- [Lines of Action - Wikipedia](https://en.wikipedia.org/wiki/Lines_of_Action)
+- [Lines of Action - Rules](https://www.ludoteka.com/clasika/lines-of-action.html)
 
 ## 4 - Game Logic
 ### 4.1 - Game State Representation
@@ -280,6 +280,6 @@ For future work, we could:
 - Change the Game State evaluation predicate to represent a more viable and accurate Game State value.
 
 ## 6 - Bibliography
-[Lines of Action - Wikipedia](https://en.wikipedia.org/wiki/Lines_of_Action)
-[Lines of Action - Rules](https://www.ludoteka.com/clasika/lines-of-action.html)
-[SICStus built-in predicates](https://sicstus.sics.se/sicstus/docs/3.7.1/html/sicstus_10.html)
+- [Lines of Action - Wikipedia](https://en.wikipedia.org/wiki/Lines_of_Action)
+- [Lines of Action - Rules](https://www.ludoteka.com/clasika/lines-of-action.html)
+- [SICStus built-in predicates](https://sicstus.sics.se/sicstus/docs/3.7.1/html/sicstus_10.html)
