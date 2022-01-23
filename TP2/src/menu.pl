@@ -51,6 +51,29 @@ validate_menu_option('3').
 validate_menu_option('4').
 validate_menu_option('5').
 
+% get_bot_level(-BotLevel)
+% Asks the user the Bot Level he wants
+get_bot_level(BotLevel) :-
+  print('Bot Level (1 or 2): '),
+  get_char(BotLevel),
+  skip_line,
+  validate_bot_level(BotLevel).
+
+get_bot_level(BotLevel) :-
+  print('Not a valid Bot Level!'),
+  get_bot_level(BotLevel).
+
+% get_bot_level(-FirstBotLevel, -SecondBotLevel)
+% Asks the user the Bot Levels he wants
+get_bot_level(FirstBotLevel, SecondBotLevel) :-
+  get_bot_level(FirstBotLevel),
+  get_bot_level(SecondBotLevel).
+
+% validate_bot_level(?Level)
+% Validates the Bot Level the user typed
+validate_bot_level('1').
+validate_bot_level('2').
+
 % validate_column(?Column)
 % Validates the column the user typed
 validate_column('A').

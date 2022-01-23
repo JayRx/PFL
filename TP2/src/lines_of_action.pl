@@ -33,11 +33,23 @@ initial_state(Size, GameState) :-
 
 % play(+GameMode)
 % Starts the Lines of Action game in the given GameMode
-play(GameMode) :-
-  %initial_state(8, GameState),
-  test_custom_initial_state(GameState),
+play('PvP') :-
+  initial_state(8, GameState),
+  %test_custom_initial_state(GameState),
   display_game(GameState),
-  play_loop(GameMode, GameState).
+  play_loop('PvP', GameState).
+
+play('PvB') :-
+  get_bot_level(BotLevel),
+  initial_state(8, GameState),
+  display_game(GameState),
+  play_loop('PvB', GameState, BotLevel).
+
+play('BvB') :-
+  get_bot_level(FirstBotLevel, SecondBotLevel),
+  initial_state(8, GameState),
+  display_game(GameState),
+  play_loop('BvB', GameState, FirstBotLevel, SecondBotLevel).
 
 % play_loop(+GameMode, +GameState)
 % Loops the Lines of Action game in the given GameMode
@@ -50,26 +62,26 @@ play_loop('PvP', GameState) :-
   print_value('W', ValueWhite),
   play_loop('PvP', NGameState).
 
-play_loop('PvB', GameState) :-
+play_loop('PvB', GameState, BotLevel) :-
   turn('B', GameState, GameStateAux),
   value(GameStateAux, 'B', ValueBlack),
   print_value('B', ValueBlack),
   sleep(1),
-  turn_bot('W', GameStateAux, NGameState),
+  turn_bot('W', GameStateAux, BotLevel, NGameState),
   value(NGameState, 'W', ValueWhite),
   print_value('W', ValueWhite),
-  play_loop('PvB', NGameState).
+  play_loop('PvB', NGameState, BotLevel).
 
-play_loop('BvB', GameState) :-
+play_loop('BvB', GameState, FirstBotLevel, SecondBotLevel) :-
   sleep(1),
-  turn_bot('B', GameState, GameStateAux),
+  turn_bot('B', GameState, FirstBotLevel, GameStateAux),
   value(GameStateAux, 'B', ValueBlack),
   print_value('B', ValueBlack),
   sleep(1),
-  turn_bot('W', GameStateAux, NGameState),
+  turn_bot('W', GameStateAux, SecondBotLevel, NGameState),
   value(NGameState, 'W', ValueWhite),
   print_value('W', ValueWhite),
-  play_loop('BvB', NGameState).
+  play_loop('BvB', NGameState, FirstBotLevel, SecondBotLevel).
 
 % turn(+Player, +GameState, -NGameState)
 % Processes the given Player's turn and returns a new GameState (NGameState)
@@ -80,8 +92,8 @@ turn(Player, GameState, NGameState) :-
 
 % turn_bot(+Player, +GameState, -NGameState)
 % Processes the given Bot's (Player) turn and returns a new GameState (NGameState)
-turn_bot(Player, GameState, NGameState) :-
-  move_piece_bot(Player, GameState, NGameState),
+turn_bot(Player, GameState, BotLevel, NGameState) :-
+  move_piece_bot(Player, GameState, BotLevel, NGameState),
   display_game(NGameState),
   \+ check_game_over(GameState).
 
@@ -116,8 +128,8 @@ move_piece(Player, GameState, NGameState) :-
 
 % move_piece_bot(+Player, +GameState, -NGameState)
 % Gets the bot's (Player) move. Then validates the move and returns a new GameState (NGameState)
-move_piece_bot(Player, GameState, NGameState) :-
-  choose_move(Player, GameState, 1, Move),
+move_piece_bot(Player, GameState, BotLevel, NGameState) :-
+  choose_move(Player, GameState, BotLevel, Move),
   print_move(Move),
   move(GameState, Move, NGameState).
 
@@ -140,13 +152,13 @@ print_move('W'-(ColumnFrom, RowFrom)-(ColumnTo, RowTo)) :-
 % choose_move(+Player, +GameState, +Level, -Move)
 % Depending on the given Bot's Level chooses the move it will make
 % Move is represented by: Player-(ColumnFrom, RowFrom)-(ColumnTo, RowTo)
-choose_move(Player, GameState, 1, Move) :-
+choose_move(Player, GameState, '1', Move) :-
   setof(Value-Player-(ColumnI, RowI)-(ColumnIN, RowIN), get_bot_move(Player, ColumnI, RowI, ColumnIN, RowIN, Value, GameState), Moves),
   random_member(MoveAux, Moves),
   get_move(MoveAux, Move).
 
-choose_move(Player, GameState, 2, Move) :-
-  setof(Player-(ColumnI, RowI)-(ColumnIN, RowIN), get_bot_move(Player, ColumnI, RowI, ColumnIN, RowIN, GameState), Moves),
+choose_move(Player, GameState, '2', Move) :-
+  setof(Value-Player-(ColumnI, RowI)-(ColumnIN, RowIN), get_bot_move(Player, ColumnI, RowI, ColumnIN, RowIN, Value, GameState), Moves),
   last(Moves, MoveAux),
   get_move(MoveAux, Move).
 
