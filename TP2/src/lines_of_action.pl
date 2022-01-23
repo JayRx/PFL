@@ -34,14 +34,14 @@ initial_state(Size, GameState) :-
 % play(+GameMode)
 % Starts the Lines of Action game in the given GameMode
 play(GameMode) :-
-  initial_state(8, GameState),
+  %initial_state(8, GameState),
+  test_custom_initial_state(GameState),
   display_game(GameState),
   play_loop(GameMode, GameState).
 
 % play_loop(+GameMode, +GameState)
 % Loops the Lines of Action game in the given GameMode
 play_loop('PvP', GameState) :-
-  write(ListOfMoves), nl,
   turn('B', GameState, GameStateAux),
   value(GameStateAux, 'B', ValueBlack),
   print_value('B', ValueBlack),
@@ -233,9 +233,9 @@ test_custom_initial_state([
   ['-','-','B','B','B','-','-','-'],
   ['-','-','B','-','-','-','-','W'],
   ['-','-','B','-','-','-','-','-'],
-  ['-','-','B','-','-','-','-','-'],
+  ['-','-','B','-','-','B','-','-'],
   ['-','-','-','-','-','-','-','-'],
   ['-','-','-','-','-','-','-','-'],
   ['-','-','-','-','-','-','-','-'],
-  ['-','-','-','B','-','-','-','W']
+  ['-','-','-','W','-','-','-','W']
 ]).
