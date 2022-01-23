@@ -37,15 +37,21 @@ Sources of information:
 The Game State is represented by a matrix with the dimensions of the playing board. The Black player pieces are represented by 'B', the White player pieces by 'W' and the blank cells represented by '-'.
 
 The following screenshot is a representation of the initial Game State:
+
 ![Initial GameState](https://i.imgur.com/5GPwSDC.png)
+
 As we can see, we above the Black pieces on the top and bottom rows and the White pieces in the other rows.
 
 The following screenshot is a representation of a Game State in the middle of a game:
+
 ![Mid GameState](https://i.imgur.com/hTfHybj.png)
+
 We can also observe the Black player's board value and the move the White player will make next.
 
 The following screenshot is a representation of a final Game State:
+
 ![Final GameState](https://i.imgur.com/6x0ddDE.png)
+
 As we can see, all black pieces are together so the Black player won the game.
 
 ### 4.2 - Game State Visualization
