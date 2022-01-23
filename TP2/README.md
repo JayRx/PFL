@@ -12,9 +12,9 @@ Made By:
 - Run the 'play' predicate.
 
 ## 3 - Game Description
-Lines of Action is a strategy board game for two players invented by Claude Soucie.
-The objective of the game is to connect all of one player's pieces into a single group.
-It is played in an 8x8 checkers board and the players can move the pieces any number of squares in the same direction (horizontally, vertically or diagonally).
+Lines of Action is an abstract strategy board game for two players invented by Claude Soucie where the player’s goal is to have all of their pieces form a contiguous structure. This means that all pieces of the same colour have to be connected in any direction (horizontally, vertically or diagonally).
+
+The game is played on an 8x8 board, with 6 black pieces in the center of the first row and 6 black pieces in the center of the last row, and simillarly, 6 white pieces in the center of the first column and 6 white pieces in the center of the last column. The players can move the pieces any number of squares as there are pieces in the same direction (horizontally, vertically or diagonally).
 
 ### 3.1 - Start of the game
 - Black moves first. Each player moves one of his pieces in every turn.
@@ -31,6 +31,7 @@ It is played in an 8x8 checkers board and the players can move the pieces any nu
 Sources of information:
 - [Lines of Action - Wikipedia](https://en.wikipedia.org/wiki/Lines_of_Action)
 - [Lines of Action - Rules](https://www.ludoteka.com/clasika/lines-of-action.html)
+- [Lines of Action - Board Game Geek](https://boardgamegeek.com/boardgame/3406/lines-action)
 
 ## 4 - Game Logic
 ### 4.1 - Game State Representation
@@ -282,4 +283,5 @@ For future work, we could:
 ## 6 - Bibliography
 - [Lines of Action - Wikipedia](https://en.wikipedia.org/wiki/Lines_of_Action)
 - [Lines of Action - Rules](https://www.ludoteka.com/clasika/lines-of-action.html)
+- [Lines of Action - Board Game Geek](https://boardgamegeek.com/boardgame/3406/lines-action)
 - [SICStus built-in predicates](https://sicstus.sics.se/sicstus/docs/3.7.1/html/sicstus_10.html)
