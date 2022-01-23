@@ -1,19 +1,30 @@
+% get_cell(+ColumnI, +RowI, +GameState, ?Cell)
+% Gets the current value in cell [RowI][ColumnI] or checks if the cell value is equal to Cell
 get_cell(ColumnI, RowI, GameState, Cell) :-
   get_row(RowI, GameState, Row),
   get_column(ColumnI, Row, Cell).
 
+% get_row(+RowI, +Board, -Row)
+% Auxiliary predicate to get_cell(+ColumnI, +RowI, +GameState, ?Cell)
+% Gets the nth Row from the Board (GameState).
 get_row(0, [Row|_], Row).
 get_row(RowI, [_|Board], Row) :-
   RowI > 0,
   RowI2 is RowI - 1,
   get_row(RowI2, Board, Row).
 
+% get_column(+ColumnI, +Board, -Column)
+% Auxiliary predicate to get_cell(+ColumnI, +RowI, +GameState, ?Cell)
+% Gets the nth Column from the given Row
 get_column(0, [Column|_], Column).
 get_column(ColumnI, [_|Board], Column) :-
   ColumnI > 0,
   ColumnI2 is ColumnI - 1,
   get_column(ColumnI2, Board, Column).
 
+% change_list_value(+L, +Pos, +Value, -NL)
+% Auxiliary predicate to change_cell(+ColumnI, +RowI, +GameState, +Value, -NGameState)
+% Changes the nth (Pos) value from the list L to Value and returns a new list with the new value
 change_list_value(L, Pos, Value, NL) :-
   append(L1, L3, L),
   length(L1, Pos),
@@ -21,11 +32,15 @@ change_list_value(L, Pos, Value, NL) :-
   length(L4, 1),
   append(L1, [Value|L2], NL).
 
+% change_cell(+ColumnI, +RowI, +GameState, +Value, -NGameState)
+% Changes the cell [RowI][ColumnI] value from the GameState to Value and returns a new GameState with the new value
 change_cell(ColumnI, RowI, GameState, Value, NGameState) :-
   get_row(RowI, GameState, Row),
   change_list_value(Row, ColumnI, Value, NRow),
   change_list_value(GameState, RowI, NRow, NGameState).
 
+% validate_move(+Player, +ColumnI, +RowI, +ColumnIN, +RowIN, +GameState)
+% Validates the move from [RowI][ColumnI] to [RowIN][ColumnIN] in the given GameState following the rules of Lines of Action
 validate_move(Player, ColumnI, RowI, ColumnIN, RowIN, GameState) :-
   MovementColumn is ColumnIN - ColumnI,
   MovementRow is RowIN - RowI,
@@ -40,6 +55,8 @@ validate_move(Player, ColumnI, RowI, ColumnIN, RowIN, GameState) :-
   Counter1 == Counter2,
   check_cells_in_between(Player, ColumnI, RowI, ColumnIN, RowIN, GameState).
 
+% check_cells_in_between(+Player, +ColumnI, +RowI, +ColumnIN, +RowIN, +GameState)
+% Checks if the cells between [RowI][ColumnI] and [RowIN][ColumnIN] (following a straight line movement - vertically, horizontally or diagonally) are filled with the same Player's pieces or are blank ('-')
 check_cells_in_between(_, Column, Row, Column, Row, _).
 check_cells_in_between(Player, ColumnI, RowI, ColumnIN, RowIN, GameState) :-
   [ColumnI, RowI] \= [ColumnIN, RowIN],
@@ -58,6 +75,8 @@ check_cells_in_between(Player, ColumnI, RowI, ColumnIN, RowIN, GameState) :-
     get_cell(ColumnI, RowI, GameState, '-')
   ).
 
+% get_movement_cells(+ColumnI, +RowI, +MovementColumnDir, +MovementRowDir, +GameState, -Counter)
+% Counts the total number of pieces found in the movement line represented by MovementRowDir and MovementColumnDir passing by the cell [RowI][ColumnI]
 get_movement_cells(ColumnI, RowI, MovementColumnDir, MovementRowDir, GameState, Counter) :-
   length(GameState, BoardSize),
   ColumnI2 is ColumnI + MovementColumnDir,
@@ -66,6 +85,9 @@ get_movement_cells(ColumnI, RowI, MovementColumnDir, MovementRowDir, GameState, 
   count_movement_cells(ColumnI, RowI, -MovementColumnDir, -MovementRowDir, GameState, BoardSize, Counter2),
   Counter is Counter1 + Counter2.
 
+% count_movement_cells(+ColumnI, +RowI, +MovementColumnDir, +MovementRowDir, +GameState, +BoardSize, -Counter)
+% Auxiliary predicate to get_movement_cells(+ColumnI, +RowI, +MovementColumnDir, +MovementRowDir, +GameState, -Counter)
+% Counts the total number of pieces found in the movement line represented by MovementRowDir and MovementColumnDir starting in the cell [RowI][ColumnI]
 count_movement_cells(ColumnI, RowI, MovementColumnDir, MovementRowDir, GameState, BoardSize, Counter) :-
   ColumnI >= 0,
   RowI >= 0,
@@ -88,10 +110,14 @@ count_movement_cells(ColumnI, RowI, MovementColumnDir, MovementRowDir, GameState
 
 count_movement_cells(_, _, _, _, _, _, 0).
 
+% validate_movement(?Movement, ?Movement)
+% Checks if a given movement is correct. It only accepts horizontal, vertical and diagonal movements
 validate_movement(Movement, Movement).
 validate_movement(0, _).
 validate_movement(_, 0).
 
+% count_pieces(+Player, +GameState, -Pieces)
+% Counts the number of Pieces the given Player has in the given GameState
 count_pieces(_, [], 0).
 
 count_pieces(Player, [Row|GameState], Pieces) :-
@@ -99,6 +125,9 @@ count_pieces(Player, [Row|GameState], Pieces) :-
   count_pieces_row(Player, Row, PiecesRow),
   Pieces is Pieces2 + PiecesRow.
 
+% count_pieces_row(+Player, +Row, -Pieces)
+% Auxiliary predicate to count_pieces(+Player, +GameState, -Pieces)
+% Counts the number of Pieces the given Player has in the given Row
 count_pieces_row(_, [], 0).
 
 count_pieces_row(Player, [Player|Row], Pieces) :-
@@ -109,11 +138,17 @@ count_pieces_row(Player, [Cell|Row], Pieces) :-
   Cell \= Player,
   count_pieces_row(Player, Row, Pieces).
 
+% get_piece_occorrunces(+Player, +GameState, -ColumnI, -RowI)
+% Auxiliary predicate to check_all_pieces_together(+Player, +GameState)
+% Gets all given Player's pieces positions [RowI][ColumnI] one by one
 get_piece_occorrunces(Player, GameState, ColumnI, RowI) :-
   nth0(RowI, GameState, Row),
   member(Player, Row),
   nth0(ColumnI, Row, Player).
 
+% path_to_all(+First, +Occorrunces, +GameState, +Player)
+% Auxiliary predicate to check_all_pieces_together(+Player, +GameState)
+% Checks if the given First Piece has a valid path to all the other pieces in the Occorrunces list only following cells with the given Player's pieces
 path_to_all(_, [], _, _).
 path_to_all(First, [First|Occorrunces], GameState, Player) :-
   path_to_all(First, Occorrunces, GameState, Player).
@@ -121,9 +156,15 @@ path_to_all(First, [Cell|Occorrunces], GameState, Player) :-
   path_to_all(First, Occorrunces, GameState, Player),
   path(First, Cell, GameState, Player).
 
+% path(+A, +B, +GameState, +Player)
+% Auxiliary predicate to path_to_all(+First, +Occorrunces, +GameState, +Player)
+% Checks if A has a valid path to B only following cells with the given Player's pieces
 path(A, B, GameState, Player) :-
     walk(A, B, [], GameState, Player).
 
+% walk(+[Column,Row], +B, +V, +GameState, +Player)
+% Auxiliary predicate to path(+A, +B, +GameState, +Player)
+% Checks if [Column,Row] has a valid path to B only following cells with the given Player's pieces
 walk([Column,Row], B, V, GameState, Player) :-
     edge([Column,Row],X, 8),
     \+ member(X,V),
@@ -134,6 +175,9 @@ walk([Column,Row], B, V, GameState, Player) :-
       walk(X, B, [[Column,Row]|V], GameState, Player)
     ).
 
+% edge(+A, +B, +Size)
+% Auxiliary predicate to walk(+[Column,Row], +B, +V, +GameState, +Player)
+% Checks if the Cell A has an edge to the Cell B in a Board with a given Size
 edge([X,Y], [X1,Y], Size) :-
     X1 is X + 1,
     X1 < Size.
@@ -167,6 +211,8 @@ edge([X,Y], [X1,Y1], Size) :-
     X1 >= 0,
     Y1 < Size.
 
+% check_all_pieces_together(+Player, +GameState)
+% Checks if all the given Player's pieces are together in a single group in the given GameState
 check_all_pieces_together(Player, GameState) :-
   setof([Column,Row], get_piece_occorrunces(Player, GameState, Column, Row), Occorrunces),
   nth0(0, Occorrunces, [FirstColumn,FirstRow]),
